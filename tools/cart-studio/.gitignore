@@ -1,0 +1,14 @@
+/target
+/web/pkg
+/out
+# This repository is public. ScreenScraper credentials are read from the environment and nowhere
+# else, so anything shaped like a credentials file is refused by name rather than by memory.
+.env
+*.env
+.screenscraper*
+.r2*
+ss-creds*
+__pycache__/
+.DS_Store
+*.iml
+.superpowers/

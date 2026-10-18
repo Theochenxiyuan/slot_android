@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <provider android:name="fyi.slot.android.ImportFixtureProvider"
+            android:authorities="fyi.slot.android.test.imports" android:exported="true" />
+    </application>
+</manifest>

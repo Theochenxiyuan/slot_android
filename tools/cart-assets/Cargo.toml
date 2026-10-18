@@ -1,0 +1,11 @@
+[package]
+name = "slot-cart-assets"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-3.0-or-later"
+publish = false
+
+[dependencies]
+png = "0.17"
+resvg = { version = "0.48", default-features = false }
+usvg = { version = "0.48", default-features = false }

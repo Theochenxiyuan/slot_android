@@ -1,0 +1,38 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'fyi.slot.android'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'fyi.slot.android'
+        minSdk 31
+        targetSdk 36
+        versionCode 16
+        versionName '0.11.0'
+        testInstrumentationRunner 'fyi.slot.android.InteractionChecks'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes {
+        release { minifyEnabled false }
+    }
+    bundle {
+        language { enableSplit = false }
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+}
+
+dependencies {
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'io.nayuki:qrcodegen:1.8.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+}

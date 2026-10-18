@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Slot Manager</title>
+<meta name="description" content="Manage your Slot game library, transfer games, and edit cartridge artwork and covers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="studio.css">
+<script type="module" src="studio.js"></script>
+</head>
+<body>
+<header class="mast">
+  <a class="mast-mark" href="https://slot-cfw.fyi/">slot.</a>
+  <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="mast-links" aria-label="Sections" hidden>
+    <span class="menu-bars" aria-hidden="true"></span>
+  </button>
+  <nav class="mast-links" id="mast-links" aria-label="slot" hidden>
+    <a href="https://slot-cfw.fyi/#install">Installing</a>
+    <a href="https://slot-cfw.fyi/#guide">Guide</a>
+    <a href="https://slot-cfw.fyi/#buttons">Buttons</a>
+    <a href="https://slot-cfw.fyi/#questions">Questions</a>
+    <a href="https://slot-cfw.fyi/#credits">Credits</a>
+    <a href="https://slot-cfw.fyi/#disclosure">AI</a>
+    <a href="./" aria-current="page">Studio</a>
+  </nav>
+</header>
+<main class="wrap">
+  <header class="intro">
+    <h1 class="title">Slot Manager</h1>
+    <div class="actions">
+      <button class="btn" id="pick" type="button" hidden>Choose SD Card</button>
+      <label class="btn" id="pick-files-label" hidden>Choose SD Card<input id="pick-files" class="visually-hidden" type="file" webkitdirectory></label>
+      <label class="btn" id="upload-label" hidden>Upload games<input id="upload-files" class="visually-hidden" type="file" multiple accept=".gba,.gb,.gbc"></label>
+    </div>
+    <p class="hint" id="upload-hint" hidden>Drop .gba, .gb or .gbc files anywhere on the page</p>
+  </header>
+
+  <form class="pair" id="pair" hidden>
+    <label class="pair-label" for="pair-code">Pairing code</label>
+    <div class="pair-row">
+      <input id="pair-code" class="pair-code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" required>
+      <button class="btn" id="pair-go" type="submit">Connect</button>
+    </div>
+    <p class="pair-note" id="pair-note">Enter the 6-character code shown on the handheld.</p>
+  </form>
+
+  <div class="uploads-wrap" id="uploads-wrap" hidden>
+    <ul class="uploads" id="uploads" aria-live="polite"></ul>
+    <button class="key dark uploads-clear" id="uploads-clear" type="button" hidden>Close</button>
+  </div>
+
+  <p class="banner" id="banner" role="alert" hidden></p>
+
+  <div class="progress" id="progress" hidden>
+    <progress id="bar" value="0" max="1"></progress>
+    <span id="progress-text"></span>
+  </div>
+
+  <div class="loader" id="loader" role="status" hidden>
+    <span class="spinner" aria-hidden="true"></span>
+    <span id="loader-text"></span>
+  </div>
+
+  <div class="shelf-bar">
+    <nav class="shelf-tabs" id="tabs" aria-label="Platforms" hidden></nav>
+    <div class="shelf-fill" id="shelf-fill" hidden>
+      <span class="fill-status" id="fill-status"></span>
+      <button class="key dark fill-open" id="fill-open" type="button" hidden>Fill unlabelled carts…</button>
+    </div>
+  </div>
+
+  <section class="grid" id="grid" aria-label="Carts"></section>
+
+  <footer class="credits">
+    <p>Game names and CRCs from <a href="https://github.com/libretro/libretro-database">libretro-database</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>).</p>
+    <p>Game logos from <a href="https://www.screenscraper.fr/">ScreenScraper</a> (<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>).</p>
+    <p>Box art from <a href="https://github.com/libretro-thumbnails">libretro-thumbnails</a>.</p>
+    <p>Game Boy is a trademark of Nintendo. Not affiliated with Nintendo.</p>
+  </footer>
+</main>
+
+<dialog id="fill" class="fill" aria-labelledby="fill-title" tabindex="-1">
+  <h2 id="fill-title"></h2>
+  <p class="fill-question" id="fill-question"></p>
+  <div class="fill-choices">
+    <button type="button" class="fill-choice" id="fill-real" value="real"><canvas></canvas><b>Real Label</b><small>The printed label, scanned from a real cart</small></button>
+    <button type="button" class="fill-choice" id="fill-logo" value="logo"><canvas></canvas><b>Logo Only</b><small>The game’s logo on a colour that suits it</small></button>
+  </div>
+  <p id="fill-note" role="status" hidden></p>
+  <div class="dialog-actions">
+    <button class="key dark" id="fill-cancel" type="button">Cancel</button>
+    <button class="btn" id="fill-save" type="button">Generate and save</button>
+  </div>
+</dialog>
+
+<dialog id="editor" class="editor" aria-label="Cart editor" tabindex="-1">
+  <div class="ed-sheet">
+  <div class="ed-head">
+    <div class="ed-heading">
+      <h2 id="ed-name"></h2>
+      <div id="ed-art-status" class="art-status" role="status" aria-live="polite" hidden>
+        <span class="spinner" aria-hidden="true" hidden></span>
+        <span id="ed-art-status-text"></span>
+        <button class="key dark" id="ed-art-action" type="button" hidden></button>
+      </div>
+    </div>
+    <button class="key dark ed-icon" id="ed-close" type="button" aria-label="Close">✕</button>
+  </div>
+  <div class="ed-body">
+  <div class="ed-cart">
+  <canvas id="ed-face" class="ed-face" aria-label="The cart"></canvas>
+  <div class="props">
+    <div class="prop">
+      <span class="k">Game</span>
+      <div class="v">
+        <button class="field" id="ed-game" type="button" aria-expanded="false"><span></span></button>
+        <div class="pop" id="ed-games" hidden>
+          <div class="search-row">
+            <input id="ed-query" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Search the game database">
+            <button class="search-clear" id="ed-query-clear" type="button" aria-label="Clear" hidden>✕</button>
+          </div>
+          <ul class="hits" id="ed-hits"></ul>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="prop">
+      <span class="k">Background</span>
+      <div class="v">
+        <button class="field" id="ed-bg" type="button" aria-expanded="false"><i></i><span></span></button>
+        <div class="pop" id="ed-bg-pal" hidden>
+          <div class="pal-grid" id="ed-bg-presets" role="group" aria-label="Colours"></div>
+          <div class="pal-foot">
+            <button class="key dark" id="ed-bg-auto" type="button">Automatic</button>
+            <span class="key dark pick">Custom…<input id="ed-bg-custom" type="color" aria-label="Custom background"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="prop">
+      <span class="k">Shell</span>
+      <div class="v">
+        <button class="field" id="ed-shell" type="button" aria-expanded="false"><i></i><span></span></button>
+        <div class="pop" id="ed-shell-pal" hidden>
+          <div class="pal-grid" id="ed-shell-presets" role="group" aria-label="Plastics"></div>
+          <div class="pal-foot">
+            <button class="key dark" id="ed-shell-auto" type="button">Automatic</button>
+            <span class="key dark pick">Custom…<input id="ed-shell-custom" type="color" aria-label="Custom shell"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop">
+      <span class="k">Finish</span>
+      <div class="v">
+        <div class="seg" id="ed-finish" role="group" aria-label="Finish">
+          <button type="button" data-value="solid">Solid</button>
+          <button type="button" data-value="clear">Clear</button>
+          <button type="button" data-value="glitter">Glitter</button>
+        </div>
+      </div>
+    </div>
+    <div class="prop" id="ed-outline-row">
+      <span class="k">Outline</span>
+      <div class="v">
+        <div class="seg" id="ed-outline" role="group" aria-label="Outline">
+          <button type="button" data-value="auto">Auto</button>
+          <button type="button" data-value="notched">Notched</button>
+          <button type="button" data-value="rounded">Rounded</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="ed-art">
+    <div class="ed-label" id="ed-label-section">
+      <div class="k-row"><span class="k">Label</span><button type="button" class="switch" id="ed-label-on" role="switch" aria-checked="true"><span class="knob"></span></button></div>
+      <div class="tiles" id="ed-tiles" role="group" aria-label="Label">
+        <button type="button" class="tile wide" data-kind="card" aria-label="On the card"><span class="badge on-card">ON CARD</span><canvas></canvas></button>
+        <button type="button" class="tile" data-kind="real"><span class="badge default">DEFAULT</span><canvas></canvas><span class="t">Real Label<small></small></span></button>
+        <button type="button" class="tile" data-kind="logo"><span class="badge default">DEFAULT</span><canvas></canvas><span class="t">Logo Only<small></small></span></button>
+        <button type="button" class="tile" data-kind="customLogo"><canvas></canvas><span class="add">+</span><span class="t">Custom logo<small></small></span></button>
+        <button type="button" class="tile" data-kind="customLabel"><canvas></canvas><span class="add">+</span><span class="t">Custom label<small></small></span></button>
+      </div>
+    </div>
+    <div class="ed-label" id="ed-box-section" hidden>
+      <div class="k-row"><span class="k">Box art</span><button type="button" class="switch" id="ed-box-on" role="switch" aria-checked="true"><span class="knob"></span></button></div>
+      <div class="tiles box" id="ed-box-tiles" role="group" aria-label="Box art">
+        <button type="button" class="tile" data-kind="card" aria-label="On the card"><span class="badge on-card">ON CARD</span><canvas></canvas></button>
+        <button type="button" class="tile" data-kind="fetched"><span class="badge default">DEFAULT</span><canvas></canvas><span class="t">Box art<small></small></span></button>
+        <button type="button" class="tile" data-kind="custom"><canvas></canvas><span class="add">+</span><span class="t">Custom image<small></small></span></button>
+      </div>
+    </div>
+    <input id="ed-file" class="visually-hidden" type="file" accept="image/*" tabindex="-1">
+  </div>
+  </div>
+  <div class="ed-foot">
+    <button class="key dark" id="ed-revert" type="button">Reset</button>
+    <p id="ed-note" class="ed-note" role="status" hidden></p>
+    <button class="btn" id="ed-save" type="button">Save</button>
+  </div>
+  <div id="ed-tip" class="tip" role="tooltip" hidden></div>
+  </div>
+</dialog>
+
+<dialog id="decision" class="fill decision" aria-labelledby="decision-title">
+  <form id="decision-form">
+    <h2 id="decision-title"></h2>
+    <p id="decision-text"></p>
+    <div class="dialog-actions">
+      <button class="key dark" id="decision-cancel" type="button">Cancel</button>
+      <button class="key dark" id="decision-discard" type="button" hidden>Discard changes</button>
+      <button class="btn" id="decision-confirm" type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="reauth" class="fill reauth" aria-labelledby="reauth-title">
+  <form id="reauth-form">
+    <h2 id="reauth-title">Pairing code no longer valid</h2>
+    <p class="pair-note" id="reauth-note">Enter the 6-character code shown on the handheld.</p>
+    <div class="pair-row">
+      <input id="reauth-code" class="pair-code" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text" aria-label="Pairing code" required>
+      <button class="btn" id="reauth-go" type="submit">Connect</button>
+    </div>
+    <div class="dialog-actions">
+      <button class="key dark" id="reauth-cancel" type="button">Cancel</button>
+    </div>
+  </form>
+</dialog>
+
+<template id="card-tpl">
+  <article class="cart">
+    <div class="cart-edit" tabindex="0" role="button">
+      <div class="face">
+        <canvas hidden></canvas>
+      </div>
+      <h2 class="stem"></h2>
+      <p class="print"></p>
+      <p class="game"></p>
+    </div>
+    <button class="cart-more" type="button" aria-label="Manage game" aria-haspopup="menu" aria-expanded="false" aria-controls="game-menu" hidden>⋯</button>
+  </article>
+</template>
+<div id="game-menu" class="game-menu" role="menu" aria-label="Manage game" hidden>
+  <button id="game-delete" class="danger" type="button" role="menuitem">Delete game</button>
+</div>
+</body>
+</html>
