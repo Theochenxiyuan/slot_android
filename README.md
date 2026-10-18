@@ -5,7 +5,7 @@ A skeuomorphic cartridge launcher and optional home screen for Android 12+ handh
 ## Download and Setup
 
 1. Download the APK from the [latest release](https://github.com/Theochenxiyuan/slot_android/releases/latest) and install it on an Android 12+ device. Allow installation from your browser or file manager if Android asks.
-2. Open Slot, allow file access when prompted, and select your existing `Slot/` or `Roms/` library folder. You can also select an empty folder and import `.gba`, `.gb`, or `.gbc` games.
+2. Open Slot, allow file access when prompted, and select your ROM folder (such as `Roms/` or `Emulation/Roms/`). You can also select an empty folder and import `.gba`, `.gb`, or `.gbc` games.
 3. Install [RetroArch](https://www.retroarch.com/?page=platforms) separately. In RetroArch, open **Online Updater > Core Downloader** and install **mGBA** for GBA, GBC, and GB, or choose another supported core in Slot.
 4. Insert a cartridge to launch its game. Optionally set Slot as your default home screen from **Settings > System**.
 
@@ -22,16 +22,16 @@ Games, BIOS files, RetroArch, and emulator cores are not included. Development A
 
 ## Library Layout
 
-Slot uses a single library root (such as `/storage/emulated/0/Slot`) with case-insensitive platform folders:
+Slot separates your ROM directory from its own appearance and configuration directory on the same storage volume:
 
-- `Games/GBA/*.gba`
-- `Games/GB/*.gb|*.gbc`
-- `Games/GBC/*.gb|*.gbc`
-- `Labels/<platform>/<ROM stem>.png`
-- `Boxart/<platform>/<ROM stem>.png`
-- `Labels/cart_shell.txt` and `Config/cart_shell.txt`
-
-Existing `Roms` or `Emulation/Roms` folders are also supported: Slot scans the platform directories in place and stores its labels, covers, and shell settings in a sibling `Slot/` directory on the same storage volume.
+- **ROM folder** (such as `/storage/emulated/0/Roms` or `/storage/emulated/0/Emulation/Roms`, with case-insensitive platform subfolders):
+  - `GBA/*.gba`
+  - `GB/*.gb|*.gbc`
+  - `GBC/*.gb|*.gbc`
+- **Slot folder** (`/storage/emulated/0/Slot`):
+  - `Labels/<platform>/<ROM stem>.png`
+  - `Boxart/<platform>/<ROM stem>.png`
+  - `Labels/cart_shell.txt` and `Config/cart_shell.txt`
 
 ## Requirements
 
