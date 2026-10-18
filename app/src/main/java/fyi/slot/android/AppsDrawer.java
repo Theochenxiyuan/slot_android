@@ -267,7 +267,6 @@ final class AppsDrawer extends FrameLayout {
             name.setGravity(Gravity.CENTER_HORIZONTAL);
             name.setMaxLines(2);
             name.setEllipsize(TextUtils.TruncateAt.END);
-            name.setTextColor(PanelStyle.INK);
             addView(name, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             setClickable(true);
             setLongClickable(true);
@@ -289,6 +288,7 @@ final class AppsDrawer extends FrameLayout {
             icon.setLayoutParams(params);
             setPadding(cellPadding, cellPadding + Math.round(layout.px(2)), cellPadding, cellPadding);
             setBackground(PanelStyle.cellBackground(layout.px(8), Math.max(1, Math.round(layout.px(1.2f)))));
+            name.setTextColor(PanelStyle.INK);
             name.setTextSize(TypedValue.COMPLEX_UNIT_PX, labelSize);
             name.setLineSpacing(0, 1.05f);
             iconKey = null;
