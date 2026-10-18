@@ -1,7 +1,6 @@
 # Device Helper Scripts
 
-Manual inspection and file-sync utilities for local device testing. Outputs are written to
-`outputs/manual/` so release archives remain untouched.
+Manual inspection and file-sync utilities for local device testing. Outputs are written to `outputs/manual/` so release archives remain untouched.
 
 | Script | Purpose |
 | --- | --- |
@@ -11,12 +10,9 @@ Manual inspection and file-sync utilities for local device testing. Outputs are 
 | `sync_labels_y700.py` | Sync and verify cartridge labels, backing up differing files before replacement |
 | `push_gba_samples.py` | Push a local GBA batch while refusing to overwrite differing existing files |
 
-These scripts keep their local ADB path and device serial defaults; inspect and adjust them for the
-connected device before running. The sync scripts read the untracked local `Slot/` folder and touch
-files on the device, so do not use them to generate test fixtures.
+These scripts keep their local ADB path and device serial defaults; inspect and adjust them for the connected device before running. The sync scripts read the untracked local `Slot/` folder and touch files on the device, so do not use them to generate test fixtures.
 
-Recording scripts start the application and send input events. Run them only during authorized
-manual device checks.
+Recording scripts start the application and send input events. Run them only during authorized manual device checks.
 
 ## Artwork Cache and Slot Manager Suites
 
@@ -27,7 +23,4 @@ adb shell am instrument -w -e suite artwork fyi.slot.android.test/fyi.slot.andro
 adb shell am instrument -w -e suite studio fyi.slot.android.test/fyi.slot.android.InteractionChecks
 ```
 
-`artwork` verifies preemption, early label publishing, concurrent recovery when clearing caches,
-idle prewarming, and queue/memory bounds on a 1,000-game index. `studio` verifies direct single-cart
-opening, compact layouts, back navigation, save/discard flows, lifecycle cleanup, and bilingual
-controller navigation using isolated fixtures before restoring user preferences.
+`artwork` verifies preemption, early label publishing, concurrent recovery when clearing caches, idle prewarming, and queue/memory bounds on a 1,000-game index. `studio` verifies direct single-cart opening, compact layouts, back navigation, save/discard flows, lifecycle cleanup, and bilingual controller navigation using isolated fixtures before restoring user preferences.

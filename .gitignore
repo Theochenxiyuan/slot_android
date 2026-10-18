@@ -18,3 +18,8 @@ outputs/
 !.env.example
 *.jks
 *.keystore
+*.p12
+*.pfx
+keystore.properties
+signing.properties
+release-signing.properties

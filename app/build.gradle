@@ -2,6 +2,23 @@ plugins {
     id 'com.android.application'
 }
 
+def signingPropertiesPath = providers.environmentVariable('SLOT_SIGNING_PROPERTIES')
+        .orElse(providers.gradleProperty('slotSigningProperties')).orNull
+def releaseSigning = null
+def releaseKeyStore = null
+if (signingPropertiesPath) {
+    def propertiesFile = file(signingPropertiesPath)
+    if (!propertiesFile.isFile()) throw new GradleException('Release signing properties file not found')
+    releaseSigning = new Properties()
+    propertiesFile.withInputStream { releaseSigning.load(it) }
+    ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'].each { key ->
+        if (!releaseSigning.getProperty(key)?.trim()) throw new GradleException("Missing release signing property: ${key}")
+    }
+    releaseKeyStore = new File(releaseSigning.getProperty('storeFile'))
+    if (!releaseKeyStore.isAbsolute()) releaseKeyStore = new File(propertiesFile.parentFile, releaseKeyStore.path)
+    if (!releaseKeyStore.isFile()) throw new GradleException('Release keystore file not found')
+}
+
 android {
     namespace 'fyi.slot.android'
     compileSdk 36
@@ -19,8 +36,21 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    signingConfigs {
+        if (releaseSigning != null) {
+            release {
+                storeFile releaseKeyStore
+                storePassword releaseSigning.getProperty('storePassword')
+                keyAlias releaseSigning.getProperty('keyAlias')
+                keyPassword releaseSigning.getProperty('keyPassword')
+            }
+        }
+    }
     buildTypes {
-        release { minifyEnabled false }
+        release {
+            minifyEnabled false
+            if (releaseSigning != null) signingConfig signingConfigs.release
+        }
     }
     bundle {
         language { enableSplit = false }
