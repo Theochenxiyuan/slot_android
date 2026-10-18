@@ -2,6 +2,15 @@
 
 A skeuomorphic cartridge launcher and optional home screen for Android 12+ handhelds, tablets, and phones. Slot for Android brings the painted cartridges, physical slot mechanics, and shelf browsing of [slot](https://github.com/BrandonKowalski/slot) (`v1.7.0`) to Android, paired with **Slot Manager** for on-device and browser-based game transfers, cartridge labels, shells, and box art, plus external **RetroArch** launching.
 
+## Download and Setup
+
+1. Download the APK from the [latest release](https://github.com/Theochenxiyuan/slot_android/releases/latest) and install it on an Android 12+ device. Allow installation from your browser or file manager if Android asks.
+2. Open Slot, allow file access when prompted, and select your existing `Slot/` or `Roms/` library folder. You can also select an empty folder and import `.gba`, `.gb`, or `.gbc` games.
+3. Install [RetroArch](https://www.retroarch.com/?page=platforms) separately. In RetroArch, open **Online Updater > Core Downloader** and install **mGBA** for GBA, GBC, and GB, or choose another supported core in Slot.
+4. Insert a cartridge to launch its game. Optionally set Slot as your default home screen from **Settings > System**.
+
+Games, BIOS files, RetroArch, and emulator cores are not included. Development APKs use a different signing key; uninstall an existing debug build before installing the public release, saving any app-specific settings you want to keep first.
+
 ## Highlights
 
 - **Tactile Cartridge Shelf**: Browse GBA, GBC, and GB games on a circular horizontal shelf with hand-painted shells, transparent internal PCBs, glitter finishes, and authentic insertion/ejection motion and audio cues.
