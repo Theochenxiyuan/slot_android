@@ -19,7 +19,7 @@ public final class LibraryCoreTest {
     @Rule public TemporaryFolder temp = new TemporaryFolder();
     private File root() throws IOException { return temp.newFolder(); }
     private File rom(File root, String platform, String name, int flag) throws IOException {
-        File folder = new File(root, "Games/" + platform); assertTrue(folder.isDirectory() || folder.mkdirs());
+        File folder = new File(root, platform); assertTrue(folder.isDirectory() || folder.mkdirs());
         byte[] bytes = new byte[512]; bytes[0x143] = (byte) flag;
         File file = new File(folder, name); Files.write(file.toPath(), bytes); return file;
     }
@@ -42,7 +42,7 @@ public final class LibraryCoreTest {
     }
     @Test public void ignoresDotFilesAndDirectories() throws Exception {
         File root = root(); rom(root, "GB", ".Game.gb", 0);
-        assertTrue(new File(root, "Games/GB/Sub.gb").mkdir()); assertTrue(scan(root, Cartridge.Platform.GB).isEmpty());
+        assertTrue(new File(root, "GB/Sub.gb").mkdir()); assertTrue(scan(root, Cartridge.Platform.GB).isEmpty());
     }
     @Test public void excludesShortAndEmptyRoms() throws Exception {
         File root = root(); File file = rom(root, "GBA", "Short.gba", 0); Files.write(file.toPath(), new byte[0x14f]);

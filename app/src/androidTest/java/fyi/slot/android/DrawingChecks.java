@@ -153,7 +153,7 @@ final class DrawingChecks {
         });
         t.check(185, "realLibraryWritesStillDebounceOnceAfterWatcherRestart", () -> {
             File root = watcherFixture();
-            File rom = new File(root, "Games/GBA/idle-check.gba");
+            File rom = new File(root, "GBA/idle-check.gba");
             AtomicInteger updates = new AtomicInteger();
             AtomicReference<Set<Cartridge.Platform>> changed = new AtomicReference<>();
             LibraryWatcher[] watcher = new LibraryWatcher[1];
@@ -220,12 +220,12 @@ final class DrawingChecks {
 
     private File watcherFixture() {
         File root = new File(t.getTargetContext().getCacheDir(), "idle-watcher-" + System.nanoTime());
-        t.require(new File(root, "Games/GBA").mkdirs(), "Owned watcher fixture");
+        t.require(new File(root, "GBA").mkdirs(), "Owned watcher fixture");
         return root;
     }
 
     private void deleteWatcherFixture(File root) {
-        t.require(new File(root, "Games/GBA").delete() && new File(root, "Games").delete() && root.delete(),
+        t.require(new File(root, "GBA").delete() && root.delete(),
                 "Owned watcher directories cleanup");
     }
 

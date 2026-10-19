@@ -38,31 +38,33 @@ final class LibraryPaths {
         catch (IOException error) { return false; }
     }
 
-    /** Resolves the Slot asset directory (Labels, Boxart, Config) on the volume containing root, or root itself. */
+    /** Resolves the Slot asset directory (Labels, Boxart, Config) at the root of the volume holding root. */
     static File assetsRoot(File root) {
         if (root == null) return null;
         try {
             File current = root.getCanonicalFile();
-            if ("Slot".equalsIgnoreCase(current.getName())) return current;
-            for (File dir = current; dir != null; dir = dir.getParentFile()) {
-                String name = dir.getName();
-                if ("Roms".equalsIgnoreCase(name) || "Games".equalsIgnoreCase(name)) {
-                    File parent = dir.getParentFile();
-                    if (parent != null) {
-                        if ("Emulation".equalsIgnoreCase(parent.getName()) && parent.getParentFile() != null) {
-                            parent = parent.getParentFile();
-                        }
-                        return child(parent, "Slot");
-                    }
-                }
-                if (new File(dir, "Slot").isDirectory() && new File(dir, "Android").isDirectory()) {
-                    return child(dir, "Slot");
-                }
-            }
-            return current;
+            File volume = volumeRoot(current);
+            if (volume != null) return child(volume, "Slot");
+            File sibling = current.getParentFile() == null ? null : child(current.getParentFile(), "Slot");
+            return sibling != null && sibling.isDirectory() ? sibling : current;
         } catch (IOException error) {
             return root;
         }
+    }
+
+    /** The shared-storage volume that contains folder, or null for app-private folders. */
+    static File volumeRoot(File folder) {
+        try {
+            for (File dir = folder.getCanonicalFile(); dir != null; dir = dir.getParentFile()) {
+                File parent = dir.getParentFile();
+                if (parent == null) return null;
+                boolean storage = "storage".equalsIgnoreCase(parent.getName());
+                boolean emulated = "emulated".equalsIgnoreCase(parent.getName()) && parent.getParentFile() != null
+                        && "storage".equalsIgnoreCase(parent.getParentFile().getName());
+                if (storage || emulated) return dir;
+            }
+        } catch (IOException ignored) { }
+        return null;
     }
 
     static List<File> assetRoots(File root) {
@@ -77,7 +79,6 @@ final class LibraryPaths {
 
     static boolean hasGamesLayout(File folder) throws IOException {
         if (folder == null || !folder.isDirectory()) return false;
-        if (child(folder, "Games").isDirectory()) return true;
         for (Cartridge.Platform platform : Cartridge.Platform.values()) {
             if (child(folder, platform.name()).isDirectory()) return true;
         }
@@ -85,16 +86,7 @@ final class LibraryPaths {
     }
 
     static File games(File root, Cartridge.Platform platform) throws IOException {
-        File gamesDir = child(root, "Games");
-        File nested = child(gamesDir, platform.name());
-        if (nested.isDirectory()) return nested;
-        File direct = child(root, platform.name());
-        if (direct.isDirectory()) return direct;
-        if (gamesDir.isDirectory()) return nested;
-        for (Cartridge.Platform other : Cartridge.Platform.values()) {
-            if (child(root, other.name()).isDirectory()) return new File(root, platform.name().toLowerCase(java.util.Locale.ROOT));
-        }
-        return nested;
+        return child(root, platform.name());
     }
 
     static File label(File root, Cartridge.Platform platform, String stem) throws IOException {

@@ -32,7 +32,7 @@ public final class RetroArchConfigTest {
     }
 
     private RomRecord rom(File root) {
-        return new RomRecord(root.getAbsolutePath(), "Games/GBA/Sample.gba", Cartridge.Platform.GBA,
+        return new RomRecord(root.getAbsolutePath(), "GBA/Sample.gba", Cartridge.Platform.GBA,
                 0, 0, new byte[512], null, false);
     }
 
@@ -157,14 +157,12 @@ public final class RetroArchConfigTest {
         assertArrayEquals(new String[]{RetroArchConfig.FILENAME}, temp.getRoot().list());
     }
 
-    @Test public void romsLayoutCreatesOnlyTheSeparateAssetDirectory() throws Exception {
-        File volume = temp.newFolder();
+    @Test public void sharedStorageAssetsLiveAtTheVolumeRoot() throws Exception {
+        File volume = new File("/storage/emulated/0").getCanonicalFile();
         File root = new File(volume, "Emulation/Roms");
-        assertTrue(root.mkdirs());
-        File wrapper = new File(config.resolve(rom(root), RetroArchLauncher.AARCH64));
-        assertEquals(new File(volume, "Slot/" + RetroArchConfig.FILENAME), wrapper);
-        assertEquals(config.content(RetroArchLauncher.AARCH64), read(wrapper));
-        assertEquals(0, root.list().length);
+        assertEquals(volume, LibraryPaths.volumeRoot(root));
+        assertEquals(new File(volume, "Slot"), LibraryPaths.assetsRoot(root));
+        assertEquals(volume, LibraryPaths.volumeRoot(new File(volume, "GBA")));
     }
 
     @Test public void missingRomsRootDoesNotCreateAssetDirectory() throws Exception {

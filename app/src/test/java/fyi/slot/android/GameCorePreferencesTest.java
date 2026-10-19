@@ -27,7 +27,7 @@ public final class GameCorePreferencesTest {
     }
 
     private RomRecord rom(String root, Platform platform, String filename, boolean hidden) {
-        return new RomRecord(root, "Games/" + platform + "/" + filename, platform, 512, 0, new byte[512], null, hidden);
+        return new RomRecord(root, platform + "/" + filename, platform, 512, 0, new byte[512], null, hidden);
     }
     private RomRecord rom(Platform platform) { return rom("/games", platform, "Sample." + platform, false); }
 

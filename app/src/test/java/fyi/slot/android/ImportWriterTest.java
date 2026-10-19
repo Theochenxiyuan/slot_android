@@ -45,7 +45,7 @@ public final class ImportWriterTest {
     }
     @Test public void sameStemDifferentExtensionsRemainSeparate() throws Exception {
         File root = temp.newFolder(); write(root, "Twin.gb", 512, bytes()); write(root, "Twin.gbc", 512, bytes());
-        assertTrue(new File(root, "Games/GB/Twin.gb").isFile()); assertTrue(new File(root, "Games/GBC/Twin.gbc").isFile());
+        assertTrue(new File(root, "GB/Twin.gb").isFile()); assertTrue(new File(root, "GBC/Twin.gbc").isFile());
     }
     @Test public void rejectsUnsafeNames() {
         for (String name : new String[]{"../x.gba", ".x.gba", "x/y.gb", "x\\y.gb", "x\n.gb", "x:gb.gba", "x.gba ", ""})
@@ -75,7 +75,7 @@ public final class ImportWriterTest {
     }
     @Test public void shorterThanDeclaredIsDiscarded() throws Exception {
         File root = temp.newFolder(); assertThrows(ImportWriter.Failure.class, () -> write(root, "Game.gba", 1024, bytes()));
-        assertFalse(new File(root, "Games/GBA/Game.gba").exists()); noParts(root);
+        assertFalse(new File(root, "GBA/Game.gba").exists()); noParts(root);
     }
     @Test public void longerThanDeclaredIsDiscarded() throws Exception {
         File root = temp.newFolder(); assertThrows(ImportWriter.Failure.class, () -> write(root, "Game.gba", 400, bytes())); noParts(root);
@@ -101,20 +101,20 @@ public final class ImportWriterTest {
     @Test public void targetAppearingDuringCopyIsNotOverwritten() throws Exception {
         File root = temp.newFolder(); AtomicBoolean created = new AtomicBoolean();
         ImportWriter.Result result = ImportWriter.write(root, "Game.gba", 512, new ByteArrayInputStream(bytes()), () -> false,
-                count -> { if (!created.getAndSet(true)) try { Files.write(new File(root, "Games/GBA/Game.gba").toPath(), new byte[]{42}); }
+                count -> { if (!created.getAndSet(true)) try { Files.write(new File(root, "GBA/Game.gba").toPath(), new byte[]{42}); }
                 catch (IOException error) { throw new AssertionError(error); } });
         assertEquals(ImportWriter.Outcome.SKIPPED, result.outcome()); assertEquals(42, Files.readAllBytes(result.file().toPath())[0]); noParts(root);
     }
     @Test public void usesExistingCaseInsensitiveDirectories() throws Exception {
-        File root = temp.newFolder(); assertTrue(new File(root, "games/gBa").mkdirs());
-        assertEquals(new File(root, "games/gBa/Game.gba"), write(root, "Game.gba", 512, bytes()).file());
+        File root = temp.newFolder(); assertTrue(new File(root, "gBa").mkdirs());
+        assertEquals(new File(root, "gBa/Game.gba"), write(root, "Game.gba", 512, bytes()).file());
     }
     @Test public void missingRootIsNotRecreated() throws Exception {
         File root = new File(temp.getRoot(), "offline");
         assertThrows(ImportWriter.Failure.class, () -> write(root, "Game.gb", 512, bytes())); assertFalse(root.exists());
     }
     @Test public void scannerCleansStalePartsAndKeepsOtherDotFiles() throws Exception {
-        File root = temp.newFolder(); File folder = new File(root, "Games/GBA"); assertTrue(folder.mkdirs());
+        File root = temp.newFolder(); File folder = new File(root, "GBA"); assertTrue(folder.mkdirs());
         File part = new File(folder, ".Game.gba.part"); Files.write(part.toPath(), bytes());
         File other = new File(folder, ".keep"); Files.write(other.toPath(), bytes());
         assertTrue(new LibraryScanner().scan(root, Cartridge.Platform.GBA, () -> false).isEmpty());
@@ -124,7 +124,7 @@ public final class ImportWriterTest {
         File root = temp.newFolder();
         ImportWriter.write(root, "Game.gba", 512, new ByteArrayInputStream(bytes()), () -> false, count -> {
             try { assertTrue(new LibraryScanner().scan(root, Cartridge.Platform.GBA, () -> false).isEmpty());
-                assertTrue(new File(root, "Games/GBA/.Game.gba.part").exists()); }
+                assertTrue(new File(root, "GBA/.Game.gba.part").exists()); }
             catch (IOException error) { throw new AssertionError(error); }
         }); noParts(root);
     }

@@ -34,7 +34,7 @@ final class RetroArchFixture implements AutoCloseable {
             saved.put(name, t.getTargetContext().getSharedPreferences(name, 0).getAll());
         }
         root = new File(t.getTargetContext().getFilesDir(), "retroarch-checks-" + System.nanoTime());
-        for (String path : List.of("Games/GBA/Garden.gba", "Games/GB/Moon.gb", "Games/GBC/Lake.gbc")) write(path);
+        for (String path : List.of("GBA/Garden.gba", "GB/Moon.gb", "GBC/Lake.gbc")) write(path);
         monitor = new Instrumentation.ActivityMonitor() {
             @Override public Instrumentation.ActivityResult onStartActivity(Intent intent) {
                 if (intent.getComponent() != null && RetroArchLauncher.PACKAGES.contains(intent.getComponent().getPackageName())) {

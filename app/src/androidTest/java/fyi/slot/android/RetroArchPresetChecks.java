@@ -207,7 +207,7 @@ final class RetroArchPresetChecks {
         t.settle(100); t.tapSettingsRow(row);
     }
     private RetroArchPreferences preferences() { return new RetroArchPreferences(t.getTargetContext()); }
-    private RomRecord rom(File root) { return new RomRecord(root.getAbsolutePath(), "Games/GBA/Sample.gba", Cartridge.Platform.GBA, 0, 0, new byte[512], null, false); }
+    private RomRecord rom(File root) { return new RomRecord(root.getAbsolutePath(), "GBA/Sample.gba", Cartridge.Platform.GBA, 0, 0, new byte[512], null, false); }
     private String text(int row, int child) {
         String[] result = new String[1];
         t.runOnMainSync(() -> result[0] = ((TextView) ((LinearLayout) panel().rowView(row)).getChildAt(child)).getText().toString());

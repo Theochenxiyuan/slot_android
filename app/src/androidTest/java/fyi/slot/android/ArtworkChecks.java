@@ -84,7 +84,7 @@ final class ArtworkChecks {
         List<Cartridge> cards = new ArrayList<>();
         File root = new File(t.getTargetContext().getFilesDir(), "artwork-check-" + System.nanoTime());
         for (int i = 0; i < count; i++) {
-            RomRecord rom = new RomRecord(root.getPath(), "Games/GBA/Artwork " + i + ".gba", Cartridge.Platform.GBA,
+            RomRecord rom = new RomRecord(root.getPath(), "GBA/Artwork " + i + ".gba", Cartridge.Platform.GBA,
                     512, 1, new byte[0x150], null, false);
             cards.add(new Cartridge(rom, ShellConfig.parse("auto 249c60 clear"), null));
         }

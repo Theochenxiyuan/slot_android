@@ -7,8 +7,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUT = ROOT / "outputs" / "manual"
-LOCAL = ROOT / "Slot" / "Games" / "GBA"
-REMOTE = "/storage/emulated/0/Slot/Games/GBA"
+LOCAL = ROOT / "Slot" / "GBA"
+REMOTE = "/storage/emulated/0/Slot/GBA"
 ADB = "C:/Users/theoc/AppData/Local/Android/Sdk/platform-tools/adb.exe"
 SERIAL = "HA2E9THE"
 

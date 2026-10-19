@@ -159,7 +159,7 @@
     <string name="guide_games">Games and appearance</string>
     <string name="guide_emulator">Prepare emulator</string>
     <string name="guide_controls">Basic controls</string>
-    <string name="guide_rules_text">Choose an existing Roms, Slot or Games folder, or an empty folder to set up GBA, GBC and GB automatically. Supports extracted .gba, .gbc and .gb files up to 64 MiB.</string>
+    <string name="guide_rules_text">Choose a folder that holds GBA, GBC and GB games, such as Roms or Emulation/Roms. An empty folder gets those folders created. Supports extracted .gba, .gbc and .gb files up to 64 MiB.</string>
     <string name="guide_games_text">Import games on this device, open Slot Manager to generate labels and covers, or switch to Connect to upload from a browser.</string>
     <string name="guide_game_count">Games · %1$d</string>
     <string name="guide_connect">Upload from computer</string>

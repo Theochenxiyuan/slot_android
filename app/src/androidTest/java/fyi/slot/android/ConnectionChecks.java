@@ -41,10 +41,10 @@ final class ConnectionChecks {
         fixture = new File(t.getTargetContext().getFilesDir(), "connection-checks-" + System.nanoTime());
         root = new File(fixture, "Slot");
         try {
-            require(new File(root, "Games/GBA").mkdirs() && new File(root, "Games/GB").mkdirs(), "Owned fixture");
+            require(new File(root, "GBA").mkdirs() && new File(root, "GB").mkdirs(), "Owned fixture");
             try { root = root.getCanonicalFile(); fixture = fixture.getCanonicalFile(); }
             catch (IOException error) { throw new AssertionError(error); }
-            write(new File(root, "Games/GBA/Garden.gba"), rom(512));
+            write(new File(root, "GBA/Garden.gba"), rom(512));
             MainActivity.testShelf = null;
             t.getUiAutomation().grantRuntimePermission(t.getTargetContext().getPackageName(), android.Manifest.permission.POST_NOTIFICATIONS);
             t.recreateActivity();
@@ -105,7 +105,7 @@ final class ConnectionChecks {
                 require(added.status() == 201, "Upload accepted: " + added.status());
                 await(() -> library().snapshot().stream().anyMatch(cart -> cart.rom.filename.equals("Upload Moon.gb"))
                         && t.view().libraryCount() == 2);
-                require(Files.isRegularFile(new File(root, "Games/GB/Upload Moon.gb").toPath()), "ROM written into Games/GB");
+                require(Files.isRegularFile(new File(root, "GB/Upload Moon.gb").toPath()), "ROM written into GB");
                 Reply again = http("PUT", "/api/import/GB/Upload%20Moon.gb", ConnectionState.pin(), rom(4096));
                 require(again.status() == 200 && again.text().contains("skipped"), "Same name skipped");
                 noParts();
@@ -134,12 +134,12 @@ final class ConnectionChecks {
                 require(http("PUT", "/api/boxart/GBA/Garden.png", ConnectionState.pin(), png()).text().contains("skipped"), "Box art is not overwritten");
             });
             t.check(236, "computerDeletesExclusiveAppearanceKeepsSavesAndRefreshesEmptyShelf", () -> {
-                File save = new File(root, "Games/GBA/Garden.srm");
+                File save = new File(root, "GBA/Garden.srm");
                 write(save, new byte[]{1, 2, 3});
                 require(http("DELETE", "/api/games/GBA/Garden.gba", null, null).status() == 401, "Deletion requires pairing");
                 require(http("DELETE", "/api/games/GBA/Garden.gba", ConnectionState.pin(), null).status() == 200, "Deletion succeeds");
                 await(() -> library().snapshot().size() == 1 && t.view().libraryCount() == 1);
-                require(!new File(root, "Games/GBA/Garden.gba").exists(), "Game deleted");
+                require(!new File(root, "GBA/Garden.gba").exists(), "Game deleted");
                 require(!new File(root, "Labels/GBA/Garden.png").exists() && !new File(root, "Boxart/GBA/Garden.png").exists(), "Appearance deleted");
                 require(save.isFile(), "Save retained");
                 require(!http("GET", "/api/shells", ConnectionState.pin(), null).text().contains("Garden ="), "Shell override deleted");

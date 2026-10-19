@@ -73,7 +73,7 @@ def main():
         if actual.get(relative) != checksum:
             raise RuntimeError(f"Final label verification failed: {relative}")
     labels = {path.stem for path in (LOCAL / "GBA").glob("*.png")}
-    missing = [path.name for path in (ROOT / "Slot" / "Games" / "GBA").glob("*.gba") if path.stem not in labels]
+    missing = [path.name for path in (ROOT / "Slot" / "GBA").glob("*.gba") if path.stem not in labels]
     report = {"serial": SERIAL, "destination": REMOTE, "added": added, "updated": updated, "skipped_identical": skipped,
               "verified_sha256": {relative: checksum for relative, (_, checksum) in local.items()}, "missing_gba_labels": missing}
     OUTPUT.mkdir(parents=True, exist_ok=True)

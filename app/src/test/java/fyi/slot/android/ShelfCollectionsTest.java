@@ -28,7 +28,7 @@ public final class ShelfCollectionsTest {
     }
 
     private RomRecord rom(String root, Platform platform, String filename) {
-        return new RomRecord(root, "Games/" + platform + "/" + filename, platform, 512, 0, new byte[512], null, false);
+        return new RomRecord(root, platform + "/" + filename, platform, 512, 0, new byte[512], null, false);
     }
 
     private Cartridge cart(RomRecord rom) {

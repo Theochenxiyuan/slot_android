@@ -53,19 +53,19 @@ final class LibraryManagementChecks {
                 require(imports().state().count(R.string.import_added) == 3, "Three successful results");
                 await(() -> library().snapshot().size() == 3 && t.view().libraryCount() == 3);
                 for (String path : List.of("GBA/Garden.gba", "GB/Moon.gb", "GBC/Lake.gbc"))
-                    require(new File(root, "Games/" + path).length() == 512, "Complete ROM " + path);
+                    require(new File(root, path).length() == 512, "Complete ROM " + path);
                 require(importDialog().isShowing(), "Result dialog shown");
                 require(!hasRow(R.string.import_results) && !hasRow(R.string.import_progress), "No persistent import entry");
                 require(dialogContains(t.view().language().text(R.string.import_summary, 3, 0, 0)), "Compact success summary");
             });
             t.check(135, "sameNameAndEquivalentNameSkipWithoutOverwriting", () -> {
                 byte[] original;
-                try { original = Files.readAllBytes(new File(root, "Games/GBA/Garden.gba").toPath()); }
+                try { original = Files.readAllBytes(new File(root, "GBA/Garden.gba").toPath()); }
                 catch (IOException error) { throw new AssertionError(error); }
                 batch(source("Garden.gba"), source("GARDEN.GBA"), source("Café.gba"), source("Cafe\u0301.gba")); finishBatch();
                 require(imports().state().count(R.string.import_skipped) == 3, "Same, case and NFC duplicates skip");
                 require(imports().state().count(R.string.import_added) == 1, "One new file");
-                try { require(java.util.Arrays.equals(original, Files.readAllBytes(new File(root, "Games/GBA/Garden.gba").toPath())), "Original unchanged"); }
+                try { require(java.util.Arrays.equals(original, Files.readAllBytes(new File(root, "GBA/Garden.gba").toPath())), "Original unchanged"); }
                 catch (IOException error) { throw new AssertionError(error); }
                 noParts(root);
             });
@@ -89,7 +89,7 @@ final class LibraryManagementChecks {
                 await(() -> imports().state().bytes() > 0 && imports().state().current().equals("Cancelled.gba"));
                 click(R.string.cancel_import); finishBatch();
                 require(imports().state().cancelled(), "Cancelled state"); require(imports().state().count(R.string.import_added) == 1, "Completed file retained");
-                require(!new File(root, "Games/GBA/Cancelled.gba").exists() && !new File(root, "Games/GB/Unstarted.gb").exists(), "No unfinished ROM"); noParts(root);
+                require(!new File(root, "GBA/Cancelled.gba").exists() && !new File(root, "GB/Unstarted.gb").exists(), "No unfinished ROM"); noParts(root);
             });
             t.check(139, "activeImportAndDialogSurviveRecreation", () -> {
                 batch(source("Retained.gba", 1024 * 1024, "1048576", "slow"));
@@ -110,7 +110,7 @@ final class LibraryManagementChecks {
                 batch(source("OldDestination.gba", 8 * 1024 * 1024, "8388608", "slow")); await(() -> imports().state().bytes() > 0);
                 File another = new File(fixture, "Other"); require(another.mkdir(), "Second root"); choose(another); finishBatch();
                 require(imports().state().cancelled(), "Changing root cancels batch");
-                require(!new File(another, "Games/GBA/OldDestination.gba").exists(), "No redirect to new root"); noParts(root); choose(root);
+                require(!new File(another, "GBA/OldDestination.gba").exists(), "No redirect to new root"); noParts(root); choose(root);
             });
             t.check(142, "pickerCancellationPreservesLibraryAndResults", () -> {
                 openLibrary(); LibraryImportSession.State before = imports().state();
@@ -124,7 +124,7 @@ final class LibraryManagementChecks {
                 for (int i = 0; i < 4; i++) t.sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
                 t.sendKeyDownUpSync(KeyEvent.KEYCODE_BUTTON_A);
                 await(() -> library().hidden().stream().anyMatch(rom -> rom.id.equals(garden.id)));
-                require(new File(root, "Games/GBA/Garden.gba").isFile(), "Hide leaves ROM on disk");
+                require(new File(root, "GBA/Garden.gba").isFile(), "Hide leaves ROM on disk");
                 require(library().snapshot().stream().noneMatch(card -> card.id.equals(garden.id)), "Hidden removed from shelf");
             });
             t.check(144, "hiddenGamesRestoreInBayAndReturnToParentFocus", () -> {
@@ -136,7 +136,7 @@ final class LibraryManagementChecks {
             });
             t.check(145, "hiddenIdentitySeparatesSameStemExtensionsAndRoots", () -> {
                 try {
-                    File folder = new File(root, "Games/GB"); Files.write(new File(folder, "Twin.gb").toPath(), new byte[512]);
+                    File folder = new File(root, "GB"); Files.write(new File(folder, "Twin.gb").toPath(), new byte[512]);
                     Files.write(new File(folder, "Twin.gbc").toPath(), new byte[512]);
                 } catch (IOException error) { throw new AssertionError(error); }
                 refresh(); await(() -> library().snapshot().stream().anyMatch(card -> card.rom.filename.equals("Twin.gbc")));
@@ -144,7 +144,7 @@ final class LibraryManagementChecks {
                 await(() -> library().hidden().stream().anyMatch(rom -> rom.id.equals(twin.id)));
                 require(cart("Twin.gbc") != null, "Other extension remains visible");
                 File other = new File(fixture, "Other");
-                try { File folder = new File(other, "Games/GB"); require(folder.mkdirs(), "Second library platform"); Files.write(new File(folder, "Twin.gb").toPath(), new byte[512]); }
+                try { File folder = new File(other, "GB"); require(folder.mkdirs(), "Second library platform"); Files.write(new File(folder, "Twin.gb").toPath(), new byte[512]); }
                 catch (IOException error) { throw new AssertionError(error); }
                 choose(other); await(() -> library().snapshot().size() == 1); require(library().hidden().isEmpty(), "Other root unaffected"); choose(root);
                 await(() -> library().hidden().size() == 1);
@@ -152,7 +152,7 @@ final class LibraryManagementChecks {
             t.check(146, "hiddenStateSurvivesRecreationAndRescan", () -> {
                 RomRecord cafe = cart("Café.gba").rom;
                 t.runOnMainSync(() -> library().setHidden(cafe, true)); await(() -> library().hidden().size() == 2);
-                require(new File(root, "Games/GBA/Café.gba").renameTo(new File(root, "Games/GBA/Cafe\u0301.gba")), "Equivalent Unicode filename rename");
+                require(new File(root, "GBA/Café.gba").renameTo(new File(root, "GBA/Cafe\u0301.gba")), "Equivalent Unicode filename rename");
                 refresh(); require(library().hidden().stream().anyMatch(rom -> rom.id.equals(cafe.id)), "NFC identity preserves hidden state after rename");
                 t.runOnMainSync(() -> library().setHidden(cafe, false)); await(() -> library().hidden().size() == 1);
                 t.runOnMainSync(() -> library().setHidden(cafe, true)); await(() -> library().hidden().size() == 2);
@@ -179,7 +179,7 @@ final class LibraryManagementChecks {
             });
             t.check(149, "hiddenListPagingRemainsBoundedAndControllerNavigable", () -> {
                 try {
-                    for (int i = 0; i < 35; i++) Files.write(new File(root, "Games/GBA/Hidden " + i + ".gba").toPath(), new byte[512]);
+                    for (int i = 0; i < 35; i++) Files.write(new File(root, "GBA/Hidden " + i + ".gba").toPath(), new byte[512]);
                 } catch (IOException error) { throw new AssertionError(error); }
                 refresh(); await(() -> library().snapshot().stream().filter(cart -> cart.title.startsWith("Hidden ")).count() == 35);
                 List<RomRecord> hide = library().snapshot().stream().filter(cart -> cart.title.startsWith("Hidden ")).map(cart -> cart.rom)
@@ -222,7 +222,7 @@ final class LibraryManagementChecks {
                 android.app.AlertDialog window = importDialog().window();
                 t.sendKeyDownUpSync(KeyEvent.KEYCODE_BUTTON_B); finishBatch();
                 require(window == importDialog().window() && imports().state().cancelled(), "Back cancels without closing window");
-                require(!new File(root, "Games/GBA/BackCancelled.gba").exists(), "No partial ROM after back"); noParts(root);
+                require(!new File(root, "GBA/BackCancelled.gba").exists(), "No partial ROM after back"); noParts(root);
                 t.sendKeyDownUpSync(KeyEvent.KEYCODE_BUTTON_A); t.settle(100);
                 require(!importDialog().isShowing() && imports().state().root() == null, "A closes cancelled result and clears state");
             });

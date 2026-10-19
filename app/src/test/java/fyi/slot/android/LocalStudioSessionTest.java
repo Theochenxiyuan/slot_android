@@ -39,7 +39,7 @@ public final class LocalStudioSessionTest {
     @Test public void directCartUrlEncodesFilenameAndKeepsPlatformAndLanguage() throws Exception {
         try (LocalStudioSession studio = session(temp.newFolder("Encoded"))) {
             studio.start();
-            RomRecord rom = new RomRecord(temp.getRoot().getAbsolutePath(), "Games/GBA/\u6E38\u620F + Bonus.gba",
+            RomRecord rom = new RomRecord(temp.getRoot().getAbsolutePath(), "GBA/\u6E38\u620F + Bonus.gba",
                     Cartridge.Platform.GBA, 512, 0, new byte[0x150], null, false);
             String query = URI.create(studio.url("zh", rom)).getRawQuery();
             assertTrue(query.contains("platform=GBA")); assertTrue(query.contains("lang=zh"));

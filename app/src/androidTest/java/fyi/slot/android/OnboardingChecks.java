@@ -33,12 +33,12 @@ final class OnboardingChecks {
         for (String name : List.of("library", "onboarding", "shelf", "language")) saved.put(name, preferences(name).getAll());
         try {
             root = new File(t.getTargetContext().getFilesDir(), "onboarding-checks-" + System.nanoTime());
-            require(new File(root, "Games/GBA").mkdirs(), "Owned library");
+            require(new File(root, "GBA").mkdirs(), "Owned library");
             try {
                 byte[] label = android.util.Base64.decode("iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAB7QOjdAAAAD0lEQVR4nGO0snJiYGAAAAOUALgNWObMAAAAAElFTkSuQmCC", 0);
                 require(new File(root, "Labels/GBA").mkdirs(), "Sample labels");
                 for (String name : List.of("Alpha", "Beta")) {
-                    Files.write(new File(root, "Games/GBA/" + name + ".gba").toPath(), new byte[512]);
+                    Files.write(new File(root, "GBA/" + name + ".gba").toPath(), new byte[512]);
                     Files.write(new File(root, "Labels/GBA/" + name + ".png").toPath(), label);
                 }
             } catch (java.io.IOException error) { throw new AssertionError(error); }

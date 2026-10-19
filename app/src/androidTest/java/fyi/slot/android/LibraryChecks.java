@@ -83,7 +83,7 @@ final class LibraryChecks {
             });
             t.check(114, "watcherDetectsCopiedRomAndNewFolders", () -> {
                 writeRom("GBA", "Forest.gba", 0); await(() -> library().snapshot().size() == 6);
-                File folder = new File(root, "Games/GBC"); File old = new File(root, "Games/GBC-away");
+                File folder = new File(root, "GBC"); File old = new File(root, "GBC-away");
                 require(folder.renameTo(old), "Rename platform folder"); await(() -> library().snapshot().size() == 5);
                 require(old.renameTo(folder), "Restore platform folder"); await(() -> library().snapshot().size() == 6);
             });
@@ -94,7 +94,7 @@ final class LibraryChecks {
                 require(library().snapshot().size() == 6, "Appearance update preserves games");
             });
             t.check(116, "confirmedDeletionRemovesIndexEntry", () -> {
-                require(new File(root, "Games/GBA/Forest.gba").delete(), "Delete owned test ROM");
+                require(new File(root, "GBA/Forest.gba").delete(), "Delete owned test ROM");
                 await(() -> library().snapshot().size() == 5);
             });
             t.check(117, "sqliteMergeIsIdempotentAndCachesCrc", () -> {
@@ -110,8 +110,8 @@ final class LibraryChecks {
                 } catch (IOException error) { throw new AssertionError(error); }
             });
             t.check(118, "scanFailurePreservesPlatformIndex", () -> {
-                File link = new File(root, "Games/GB/Broken.gb");
-                try { Files.createSymbolicLink(link.toPath(), new File(root, "Games/GBA/Garden 2.gba").toPath()); }
+                File link = new File(root, "GB/Broken.gb");
+                try { Files.createSymbolicLink(link.toPath(), new File(root, "GBA/Garden 2.gba").toPath()); }
                 catch (IOException error) { throw new AssertionError(error); }
                 try {
                     refresh(); await(() -> library().status() == LibraryRepository.Status.ERROR);
@@ -158,14 +158,14 @@ final class LibraryChecks {
                 t.key(KeyEvent.KEYCODE_BUTTON_B); t.settle(450);
             });
             t.check(123, "changingRootsCannotReuseFileIdentity", () -> {
-                File another = new File(fixture, "another"); require(new File(another, "Games/GBA").mkdirs(), "Second root");
-                try { Files.copy(new File(root, "Games/GBA/Garden 2.gba").toPath(), new File(another, "Games/GBA/Garden 2.gba").toPath()); }
+                File another = new File(fixture, "another"); require(new File(another, "GBA").mkdirs(), "Second root");
+                try { Files.copy(new File(root, "GBA/Garden 2.gba").toPath(), new File(another, "GBA/Garden 2.gba").toPath()); }
                 catch (IOException error) { throw new AssertionError(error); }
                 String first = cart("Garden 2.gba").id; choose(another); await(() -> library().snapshot().size() == 1);
                 require(!cart("Garden 2.gba").id.equals(first), "Root-scoped identity");
                 File romsRoot = new File(fixture, "Roms"); require(new File(romsRoot, "gba").mkdirs() && new File(romsRoot, "gb").mkdirs(), "Direct platform folders");
                 try {
-                    Files.copy(new File(root, "Games/GBA/Garden 2.gba").toPath(), new File(romsRoot, "gba/Garden 2.gba").toPath());
+                    Files.copy(new File(root, "GBA/Garden 2.gba").toPath(), new File(romsRoot, "gba/Garden 2.gba").toPath());
                     ImportWriter.Result imported = ImportWriter.write(romsRoot, "Direct.gb", 512, new java.io.ByteArrayInputStream(new byte[512]), () -> false, c -> {});
                     require(imported.outcome() == ImportWriter.Outcome.ADDED && new File(romsRoot, "gb/Direct.gb").isFile(), "Import follows direct platform layout");
                 } catch (IOException error) { throw new AssertionError(error); }
@@ -180,7 +180,7 @@ final class LibraryChecks {
             t.check(124, "thousandRecordsKeepBitmapAndQueueBounded", () -> {
                 List<Cartridge> cards = new ArrayList<>();
                 for (int i = 0; i < 1000; i++) {
-                    RomRecord rom = new RomRecord(root.getPath(), "Games/GBA/Game " + i + ".gba", Cartridge.Platform.GBA,
+                    RomRecord rom = new RomRecord(root.getPath(), "GBA/Game " + i + ".gba", Cartridge.Platform.GBA,
                             512, 1, new byte[0x150], null, false);
                     cards.add(new Cartridge(rom, ShellConfig.defaults(rom), null));
                 }
@@ -284,7 +284,7 @@ final class LibraryChecks {
     private void writeRom(String platform, String filename, int flag) {
         byte[] head = new byte[512]; head[0x143] = (byte) flag;
         try {
-            File file = new File(root, "Games/" + platform + "/" + filename);
+            File file = new File(root, platform + "/" + filename);
             require(file.getParentFile().isDirectory() || file.getParentFile().mkdirs(), "ROM folder"); Files.write(file.toPath(), head);
         } catch (IOException error) { throw new AssertionError(error); }
     }

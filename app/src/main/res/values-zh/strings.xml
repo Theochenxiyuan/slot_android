@@ -151,7 +151,7 @@
     <string name="guide_games">游戏与卡带外观</string>
     <string name="guide_emulator">准备模拟器</string>
     <string name="guide_controls">基本操作</string>
-    <string name="guide_rules_text">可直接选择已有的 Roms、Slot 或 Games 文件夹，选择空文件夹会自动创建平台目录。支持解压后的 .gba、.gbc、.gb 文件，单文件最大 64 MiB。</string>
+    <string name="guide_rules_text">选择存放 GBA、GBC、GB 游戏的文件夹，例如 Roms 或 Emulation/Roms。选择空文件夹会自动创建平台目录。支持解压后的 .gba、.gbc、.gb 文件，单文件最大 64 MiB。</string>
     <string name="guide_games_text">可从本机多选导入游戏、打开 Slot Manager 生成标签与封面，或切换到「连接电脑」在浏览器中上传。</string>
     <string name="guide_game_count">当前共 %1$d 款游戏</string>
     <string name="guide_connect">连接电脑上传</string>

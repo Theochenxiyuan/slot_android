@@ -47,7 +47,7 @@ final class LibraryStorage {
         List<File> out = new ArrayList<>();
         for (Location location : volumes(activity)) {
             File root = location.directory();
-            if (LibraryPaths.child(root, "Games").isDirectory()) out.add(root);
+            if (LibraryPaths.hasGamesLayout(root)) out.add(root);
             File slot = LibraryPaths.child(root, "Slot");
             if (LibraryPaths.hasGamesLayout(slot)) out.add(slot);
             File roms = LibraryPaths.child(root, "Roms");
@@ -79,7 +79,6 @@ final class LibraryStorage {
 
     /**
      * Maps a picked shared-storage tree to its library root; other providers are unsupported.
-     * Picking Games selects its parent, which also reaches volume roots the picker cannot grant.
      */
     static File resolve(Activity activity, Uri tree) {
         if (tree == null || !PROVIDER.equals(tree.getAuthority())) return null;
@@ -90,9 +89,7 @@ final class LibraryStorage {
         String key = id.substring(0, split), path = id.substring(split + 1);
         for (Location location : volumes(activity)) {
             if (!location.key().equalsIgnoreCase(key)) continue;
-            File folder = path.isEmpty() ? location.directory() : new File(location.directory(), path);
-            File parent = folder.getParentFile();
-            return "Games".equalsIgnoreCase(folder.getName()) && parent != null ? parent : folder;
+            return path.isEmpty() ? location.directory() : new File(location.directory(), path);
         }
         return null;
     }

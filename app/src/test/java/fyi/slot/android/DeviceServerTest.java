@@ -69,7 +69,7 @@ public final class DeviceServerTest {
     @After public void stop() { server.stop(); crcs.close(); }
 
     private File rom(String platform, String name, int size) throws IOException {
-        File file = new File(root.get(), "Games/" + platform + "/" + name);
+        File file = new File(root.get(), platform + "/" + name);
         assertTrue(file.getParentFile().isDirectory() || file.getParentFile().mkdirs());
         byte[] bytes = new byte[size];
         for (int i = 0; i < size; i++) bytes[i] = (byte) (i * 7);
@@ -210,14 +210,14 @@ public final class DeviceServerTest {
         }
         assertEquals(400, request("GET", "/../secret.gba", Map.of(), null).status());
         assertEquals(400, put("/api/import/GBA/..%2Fescape.gba", new byte[512]).status());
-        assertFalse(new File(root.get(), "Games/escape.gba").exists());
+        assertFalse(new File(root.get(), "escape.gba").exists());
         assertEquals(400, put("/api/import/GBA/.dot.gba", new byte[512]).status());
     }
 
     @Test public void symbolicLinksAreNotServed() throws Exception {
         File outside = new File(root.get().getParentFile(), "outside.gba");
         Files.write(outside.toPath(), new byte[512]);
-        File link = new File(root.get(), "Games/GBA/Link.gba");
+        File link = new File(root.get(), "GBA/Link.gba");
         assertTrue(link.getParentFile().mkdirs());
         try { Files.createSymbolicLink(link.toPath(), outside.toPath()); }
         catch (IOException | UnsupportedOperationException | SecurityException unavailable) { Assume.assumeNoException(unavailable); }
@@ -231,7 +231,7 @@ public final class DeviceServerTest {
         Reply added = put("/api/import/GBC/New%20Game.gbc", rom);
         assertEquals(201, added.status());
         assertTrue(added.text().contains("\"result\":\"added\""));
-        File file = new File(root.get(), "Games/GBC/New Game.gbc");
+        File file = new File(root.get(), "GBC/New Game.gbc");
         assertArrayEquals(rom, Files.readAllBytes(file.toPath()));
         assertEquals(List.of(EnumSet.of(Cartridge.Platform.GBC)), events);
         byte[] other = new byte[1024];
@@ -243,7 +243,7 @@ public final class DeviceServerTest {
         assertEquals(400, put("/api/import/GBA/New.gbc", rom).status());
         assertEquals(400, put("/api/import/GBA/New.zip", rom).status());
         assertEquals(400, put("/api/import/GBA/Short.gba", new byte[0x14f]).status());
-        assertFalse(new File(root.get(), "Games/GBA/Short.gba").exists());
+        assertFalse(new File(root.get(), "GBA/Short.gba").exists());
     }
 
     @Test public void deletingAGameRemovesOnlyItsExclusiveAppearanceAndKeepsSaves() throws Exception {
@@ -307,7 +307,7 @@ public final class DeviceServerTest {
         assertEquals(200, delete("/api/games/GB/Twin.gb").status());
         assertEquals(200, get("/api/labels/GB/Twin.png").status());
         assertEquals(200, get("/api/boxart/GB/Twin.png").status());
-        assertTrue(new File(root.get(), "Games/GB/Twin.gbc").isFile());
+        assertTrue(new File(root.get(), "GB/Twin.gbc").isFile());
     }
 
     @Test public void invalidAppearanceConfigurationPreventsDeletionBeforeAnyFileIsMoved() throws Exception {
@@ -344,7 +344,7 @@ public final class DeviceServerTest {
         assertEquals(200, get("/api/boxart/GBA/Game.png").status());
         assertEquals(original, read(new File(root.get(), "Labels/cart_shell.txt")));
         assertTrue(events.isEmpty());
-        for (String folder : List.of("Games/GBA", "Labels/GBA", "Boxart/GBA"))
+        for (String folder : List.of("GBA", "Labels/GBA", "Boxart/GBA"))
             assertEquals(0, new File(root.get(), folder).list((dir, name) -> name.startsWith(".slot-delete-")).length);
     }
 
@@ -353,7 +353,7 @@ public final class DeviceServerTest {
         Reply skipped = put("/api/import/GBA/Big.gba", new byte[4 * 1024 * 1024]);
         assertEquals(200, skipped.status());
         assertTrue(skipped.text().contains("\"skipped\""));
-        assertEquals(512, new File(root.get(), "Games/GBA/Big.gba").length());
+        assertEquals(512, new File(root.get(), "GBA/Big.gba").length());
         assertEquals(401, request("PUT", "/api/import/GBA/Other.gba", auth("WRONG1"), new byte[4 * 1024 * 1024]).status());
     }
 
@@ -372,7 +372,7 @@ public final class DeviceServerTest {
             Reply reply = parse(socket.getInputStream());
             assertEquals(400, reply.status());
         }
-        File folder = new File(root.get(), "Games/GBA");
+        File folder = new File(root.get(), "GBA");
         String[] left = folder.list();
         assertTrue(left == null || left.length == 0);
         assertTrue(events.isEmpty());

@@ -136,7 +136,7 @@ final class RetroArchChecks {
                 t.key(KeyEvent.KEYCODE_BUTTON_A); t.settle(3200);
                 t.require(t.view().canBrowse() && t.view().libraryCount() == 2, "Missing file refreshes shelf after ejection");
                 t.require(t.home().library().snapshot().stream().noneMatch(cart -> cart.id.equals(rom.id)), "Missing record removed");
-                f.write("Games/GBA/Garden.gba"); t.runOnMainSync(() -> t.home().library().refresh()); f.ready(); f.interceptSuccess();
+                f.write("GBA/Garden.gba"); t.runOnMainSync(() -> t.home().library().refresh()); f.ready(); f.interceptSuccess();
             });
             t.check(218, "missingRestoredRomCannotSeatAnotherGame", () -> {
                 int calls = f.launches.size();

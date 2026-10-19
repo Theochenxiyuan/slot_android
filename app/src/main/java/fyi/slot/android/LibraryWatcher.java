@@ -28,15 +28,15 @@ final class LibraryWatcher {
     void start(File root) {
         stop(); active = true;
         try {
+            File canonicalRoot = root.getCanonicalFile();
             watch(root, EnumSet.allOf(Cartridge.Platform.class));
-            File games = LibraryPaths.child(root, "Games");
-            watch(games, EnumSet.allOf(Cartridge.Platform.class));
             for (Cartridge.Platform platform : Cartridge.Platform.values()) {
-                watch(LibraryPaths.child(games, platform.name()), EnumSet.of(platform));
                 watch(LibraryPaths.child(root, platform.name()), EnumSet.of(platform));
             }
             for (File base : LibraryPaths.assetRoots(root)) {
-                watch(base, EnumSet.noneOf(Cartridge.Platform.class));
+                if (!base.getCanonicalFile().equals(canonicalRoot)) {
+                    watch(base, EnumSet.noneOf(Cartridge.Platform.class));
+                }
                 File labels = LibraryPaths.child(base, "Labels"), boxart = LibraryPaths.child(base, "Boxart");
                 watch(labels, Set.of()); watch(boxart, Set.of());
                 watch(LibraryPaths.child(base, "Config"), Set.of()); watch(LibraryPaths.child(base, "System"), Set.of());
