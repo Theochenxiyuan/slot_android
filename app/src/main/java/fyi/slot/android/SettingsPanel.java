@@ -3,6 +3,7 @@ package fyi.slot.android;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -59,10 +60,14 @@ final class SettingsPanel extends FrameLayout {
     static final class Group {
         final String id;
         final int title;
+        final int icon;
         List<Row> rows;
         int selected;
 
-        Group(String id, int title, List<Row> rows) { this.id = id; this.title = title; this.rows = List.copyOf(rows); }
+        Group(String id, int title, List<Row> rows) { this(id, title, 0, rows); }
+        Group(String id, int title, int icon, List<Row> rows) {
+            this.id = id; this.title = title; this.icon = icon; this.rows = List.copyOf(rows);
+        }
     }
 
     interface Listener { void onGroupShown(String id); }
@@ -362,10 +367,23 @@ final class SettingsPanel extends FrameLayout {
         tab.setMinimumHeight(Math.round(layout.px(42, 44)));
         tab.setBackground(PanelStyle.tabBackground(layout.px(5)));
         PanelStyle.text(tab, layout, 16.5f, 14, PanelStyle.INK);
-        tab.setTextColor(new ColorStateList(new int[][]{{android.R.attr.state_selected}, {}},
-                new int[]{PanelStyle.INK, PanelStyle.MUTED}));
+        ColorStateList colors = new ColorStateList(new int[][]{{android.R.attr.state_selected}, {}},
+                new int[]{PanelStyle.INK, PanelStyle.MUTED});
+        tab.setTextColor(colors);
+        applyIcon(tab, groups.get(index).icon, colors);
         tab.setOnClickListener(clicked -> { inRows = false; selectTab(index); });
         return tab;
+    }
+
+    /** A tab's icon follows its label's colour and stays decorative for focus. */
+    private void applyIcon(TextView tab, int resource, ColorStateList colors) {
+        if (resource == 0) return;
+        Drawable icon = getContext().getDrawable(resource).mutate();
+        int size = Math.round(layout.px(18, 17));
+        icon.setBounds(0, 0, size, size);
+        icon.setTintList(colors);
+        tab.setCompoundDrawablesRelative(icon, null, null, null);
+        tab.setCompoundDrawablePadding(Math.round(layout.px(8)));
     }
 
     private View createRow(int index) {

@@ -56,7 +56,7 @@ final class RetroArchSettings {
                     direction -> preferences.cycle(preset, direction)));
             firstPreset = false;
         }
-        return new SettingsPanel.Group(GROUP, R.string.settings_emulator, rows);
+        return new SettingsPanel.Group(GROUP, R.string.settings_emulator, R.drawable.menu_core, rows);
     }
 
     void setListener(Runnable changed) { this.changed = changed; }

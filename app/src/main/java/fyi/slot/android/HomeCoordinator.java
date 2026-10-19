@@ -198,13 +198,13 @@ final class HomeCoordinator implements SlotView.PanelHost, MachinePanelControlle
                 new SettingsPanel.Row("app_info", R.string.app_info, SettingsPanel.Kind.ENTRY, false,
                         null, direction -> launcher.openAppInfo()));
         return List.of(
-                new SettingsPanel.Group("controls", R.string.settings_controls, controls),
-                new SettingsPanel.Group("appearance", R.string.settings_appearance, appearance),
-                new SettingsPanel.Group(LibraryPanel.GROUP, R.string.settings_library, List.of()),
-                new SettingsPanel.Group(ConnectionPanel.GROUP, R.string.settings_connection, List.of()),
+                new SettingsPanel.Group("controls", R.string.settings_controls, R.drawable.settings_controls, controls),
+                new SettingsPanel.Group("appearance", R.string.settings_appearance, R.drawable.settings_appearance, appearance),
+                new SettingsPanel.Group(LibraryPanel.GROUP, R.string.settings_library, R.drawable.settings_library, List.of()),
+                new SettingsPanel.Group(ConnectionPanel.GROUP, R.string.settings_connection, R.drawable.ic_connection, List.of()),
                 retroArchSettings.group(),
-                new SettingsPanel.Group(SYSTEM_GROUP, R.string.settings_system, system),
-                new SettingsPanel.Group(ABOUT_GROUP, R.string.settings_about, about));
+                new SettingsPanel.Group(SYSTEM_GROUP, R.string.settings_system, R.drawable.settings_system, system),
+                new SettingsPanel.Group(ABOUT_GROUP, R.string.settings_about, R.drawable.menu_info, about));
     }
 
     void onLanguageChanged() {
