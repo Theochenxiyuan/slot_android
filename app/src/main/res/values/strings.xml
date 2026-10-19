@@ -35,7 +35,6 @@
     <string name="back">Back</string>
     <string name="eject">Eject</string>
     <string name="start_game">Start game</string>
-    <string name="launching_game">Starting…</string>
     <string name="insert_method">Insert method</string>
     <string name="auto_launch">Auto-start on insert</string>
     <string name="button_prompts">Button icons</string>

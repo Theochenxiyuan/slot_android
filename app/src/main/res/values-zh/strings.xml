@@ -35,7 +35,6 @@
     <string name="back">返回</string>
     <string name="eject">拔出</string>
     <string name="start_game">开始游戏</string>
-    <string name="launching_game">正在启动…</string>
     <string name="insert_method">插入方式</string>
     <string name="auto_launch">插入时打开游戏</string>
     <string name="button_prompts">按键图标</string>

@@ -815,8 +815,7 @@ public final class SlotView extends View {
             if (titleLayout.getEllipsisCount(titleLayout.getLineCount() - 1) == 0) break;
         }
         float titleHeight = titleLayout.getHeight();
-        float statusSpace = launchingFeedback ? 22f : 0f;
-        float totalHeight = cardHeight + 16f + titleHeight + 8f + 14f + statusSpace;
+        float totalHeight = cardHeight + 16f + titleHeight + 8f + 14f;
         float startY = areaTop + Math.max(0f, (availableHeight - totalHeight) / 2f);
         float cardLeft = cx - cardWidth / 2f, cardTop = startY;
 
@@ -858,9 +857,6 @@ public final class SlotView extends View {
 
         float platformBaseline = titleTop + titleHeight + 18f;
         text(c, cartridge.platform.title, cx, platformBaseline, 12f, 0xffc6c6ce, Typeface.MONOSPACE, Paint.Align.CENTER);
-        if (launchingFeedback) {
-            text(c, language.text(R.string.launching_game), cx, platformBaseline + 21f, 13f, 0xffc4ab59, Typeface.DEFAULT, Paint.Align.CENTER);
-        }
         c.restore();
     }
 
